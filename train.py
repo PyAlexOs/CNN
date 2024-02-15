@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 
 class CNN:
@@ -29,14 +29,19 @@ class CNN:
         self.image_width = image_width
         self.image_height = image_height
         self.input_layer_size = image_width * image_height  # input layer dimension depends on the size of an image
+
         self.final_objects = final_objects
         self.final_objects_count = len(final_objects)
+
         self.layers_count = len(layers_nodes_count) + 2
         self.layers_nodes_count = [
             self.input_layer_size,
             *layers_nodes_count,
             self.final_objects_count
         ]
+
+    def __init__(self, config_file: Optional[str]):
+
 
     def __call__(self):
         # check weights
