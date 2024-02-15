@@ -9,7 +9,6 @@ class CNN:
     final_objects_count: int
     layers_count: int
     layers_nodes_count: list[int]
-
     weights: list[[[int], ...], ...]
     values: list[[int], [int]]
 
@@ -18,6 +17,15 @@ class CNN:
                  image_height: int,
                  layers_nodes_count: list[int],
                  final_objects: list[Any]):
+        if not (32 <= image_width <= 3840 and 32 <= image_height <= 3840):
+            raise Exception("Image width and height should be in range [32, 3840].")
+
+        if any(list(map(lambda x: x < 1, layers_nodes_count))):
+            raise Exception("There must be at least one neuron in each layer.")
+
+        if len(final_objects) < 3:
+            raise Exception("Insufficient number of recognized objects (minimum 3).")
+
         self.image_width = image_width
         self.image_height = image_height
         self.input_layer_size = image_width * image_height  # input layer dimension depends on the size of an image
