@@ -1,5 +1,6 @@
+import json
+import csv
 import math
-import os.path
 import random
 from typing import Optional
 
@@ -12,15 +13,20 @@ class CNN:
     final_objects_count: int
     layers_count: int
     layers_nodes_count: list[int]
-    weights: list[[[int], ...], ...]
-    values: list[[int], [int]]
+
+    weights: list[list[list[float]]]
+    values: list[[float], [float]]
 
     def __init__(self,
-                 image_width: int,
-                 image_height: int,
-                 layers_nodes_count: list[int],
-                 final_objects: list[str],
-                 weights_file: Optional[str]):
+                 config_file: str,
+                 weights_file: Optional[str] = None):
+        with open(config_file, "r") as file:
+            data = json.load(file)["config"]
+            image_width: int = int(data["image_width"])
+            image_height: int = int(data["image_width"])
+            layers_nodes_count: list[int] = list(map(lambda x: int(x), data["layers_nodes_count"]))
+            final_objects: list = list(data["final_objects"])
+
         if not (32 <= image_width <= 3840 and 32 <= image_height <= 3840):
             raise Exception("Image width and height should be in range [32, 3840].")
 
@@ -44,21 +50,27 @@ class CNN:
             self.final_objects_count
         ]
 
-        if not weights_file:
+        if weights_file:
+            self.__load_weights(weights_file=weights_file)
+        else:
             self.__fill_weights()
 
-        if not os.path.isfile(weights_file):
-            raise Exception("Weights file not found.")
-
-        self.__load_weights()
-
     def __fill_weights(self):
-        for layer in range(self.layers_count):
-            for node in range(self.layers_nodes_count[layer]):
-                self.weights[layer][node] = random.uniform(0, 1)
+        self.weights = list(list(list(random.uniform(0, 1)
+                                      for _ in range(self.layers_nodes_count[layer + 1]))
+                                 for _ in range(self.layers_nodes_count[layer]))
+                            for layer in range(self.layers_count - 1))
 
-    def __load_weights(self):
-        pass
+    def __load_weights(self, weights_file: str):
+        with open(weights_file, "r") as file:
+            reader = csv.reader(file)
+            for line in reader:
+                print(line)
+
+        self.weights = list(list(list(random.uniform(0, 1)
+                                      for _ in range(self.layers_nodes_count[layer + 1]))
+                                 for _ in range(self.layers_nodes_count[layer]))
+                            for layer in range(self.layers_count - 1))
 
     @staticmethod
     def __activation_f(x: float) -> float:
@@ -69,8 +81,10 @@ class CNN:
         return self.activation_f(x) * (1 - self.activation_f(x))
 
     def __str__(self):
-        # represent
-        pass
+        return '#' * 80
+
+    def __repr__(self):
+        return "rdfgdfgvdf"
 
     def __call__(self):
         # check weights and recognize
