@@ -90,6 +90,10 @@ class CNN:
     def __activation_f_der(x: float) -> float:
         return CNN.__activation_f(x) * (1 - CNN.__activation_f(x))
 
+    @staticmethod
+    def __mse(expected: list[float]):
+        return sum(list(map(lambda x: (1 - x) ** 2, expected))) / len(expected)
+
     def __str__(self):
         return ""
 
@@ -107,7 +111,7 @@ class CNN:
                         self.__activation_f(self.values[layer - 1][relation] *
                                             self.weights[layer - 1][relation][node]))
 
-    def back_prop(self):
+    def __back_prop(self):
         pass
 
     def train(self):
