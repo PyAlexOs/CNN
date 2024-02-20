@@ -1,5 +1,5 @@
 import json
-import csv
+import pickle
 import math
 import random
 from typing import Optional
@@ -16,6 +16,8 @@ class CNN:
 
     weights: list[list[list[float]]]
     values: list[list[float]]
+
+    weights_file: str
 
     def __init__(self,
                  config_file: str,
@@ -52,8 +54,10 @@ class CNN:
 
         self.values = [[0 for _ in range(self.layers_nodes_count[layer])] for layer in range(self.layers_count)]
         if weights_file:
+            self.weights_file = weights_file
             self.__load_weights(weights_file=weights_file)
         else:
+            self.weights_file = "weights.pickle"
             self.__fill_weights()
 
     def __fill_weights(self):
@@ -63,14 +67,14 @@ class CNN:
                             for layer in range(self.layers_count - 1))
 
     def __load_weights(self, weights_file: str):
-        with open(weights_file, "r") as file:
-            reader = csv.reader(file)
-            for (layer_number, layer) in enumerate(reader):
-                for (node_number, node) in enumerate(layer):
-                    
+        with open(weights_file, "rb") as file:
+            self.weights = pickle.load(file)
 
-    def __save_weights(self, weights_file: str):
-        pass
+    def __save_weights(self, weights_file: str, after_epoch: Optional[int]):
+        if after_epoch:
+            weights_file = "".join(weights_file.split(".")[:-1]) + f"_epoch{after_epoch}.pickle"
+        with open(weights_file, "wb") as file:
+            pickle.dump(self.weights, file)
 
     @staticmethod
     def __activation_f(x: float) -> float:
@@ -89,11 +93,11 @@ class CNN:
     def __call__(self):
         return ""
 
-    def feed_forward(self):
+    def __feed_forward(self):
         for layer in range(1, self.layers_count):
             for relation in range(self.layers_nodes_count[layer - 1]):
                 for node in range(self.layers_nodes_count[layer]):
-                    self.values[layer][node] +=(
+                    self.values[layer][node] += (
                         self.__activation_f(self.values[layer - 1][relation] *
                                             self.weights[layer - 1][relation][node]))
 

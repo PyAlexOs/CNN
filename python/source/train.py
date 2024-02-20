@@ -6,7 +6,7 @@ def main():
                         help="file with weights that will be used as the initial")
     parser.add_argument("-d", "--dataset", default="../dataset",
                         help="directory with the training sample")
-    parser.add_argument("-o", "--out", default="config/weights/weights.csv",
+    parser.add_argument("-o", "--out", default="config/weights/weights.pickle",
                         help="directory where files with weights will be saved during the training")
     named_args = parser.parse_args(sys.argv[1:])
 
@@ -17,7 +17,7 @@ def main():
     weights_file = named_args.weights
     if weights_file:
         weights_file = str(weights_file)
-        if not (weights_file.endswith(".csv") and os.path.isfile(weights_file)):
+        if not (weights_file.endswith(".pickle") and os.path.isfile(weights_file)):
             raise Exception("Incorrect weights file name given.")
 
     dataset_dir: str = named_args.dataset
@@ -25,7 +25,7 @@ def main():
         raise Exception("Dataset directory not found.")
 
     out = named_args.out
-    if not (out.endswith(".csv")):
+    if not (out.endswith(".pickle")):
         raise Exception("Incorrect out file name given.")
 
     neural_network = CNN(
@@ -34,7 +34,6 @@ def main():
                          )
 
 
-# Launch from "CNN/python" directory
 # python source/train.py
 if __name__ == '__main__':
     import os
