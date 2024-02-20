@@ -42,4 +42,5 @@ if __name__ == '__main__':
     import sys
     import argparse
     from neural_network import CNN
+    print("█ █ █ █ █ █                        20%")
     main()

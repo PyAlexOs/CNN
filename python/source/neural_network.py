@@ -14,6 +14,7 @@ class CNN:
     layers_count: int
     layers_nodes_count: list[int]
 
+    learning_rate: float
     weights: list[list[list[float]]]
     values: list[list[float]]
 
@@ -27,13 +28,14 @@ class CNN:
                  weights_file: Optional[str] = None):
         with open(config_file, "r") as file:
             data = json.load(file)["config"]
-            image_width: int = int(data["image_width"])
-            image_height: int = int(data["image_width"])
-            layers_nodes_count: list[int] = list(map(lambda x: int(x), data["layers_nodes_count"]))
-            final_objects: list = list(data["final_objects"])
+            image_width: int = data["image_width"]
+            image_height: int = data["image_width"]
+            layers_nodes_count: list[int] = data["layers_nodes_count"]
+            final_objects: list = data["final_objects"]
+            self.learning_rate = data["learning_rate"]
 
-        if not (32 <= image_width <= 3840 and 32 <= image_height <= 3840):
-            raise Exception("Image width and height should be in range [32, 3840].")
+        if not (28 <= image_width <= 720 and 28 <= image_height <= 720):
+            raise Exception("Image width and height should be in range [28, 720].")
 
         if any(list(map(lambda x: x < 1, layers_nodes_count))):
             raise Exception("There must be at least one neuron in each layer.")
@@ -94,15 +96,6 @@ class CNN:
     def __mse(expected: list[float]):
         return sum(list(map(lambda x: (1 - x) ** 2, expected))) / len(expected)
 
-    def __str__(self):
-        return ""
-
-    def __repr__(self):
-        return ""
-
-    def __call__(self):
-        return ""
-
     def __feed_forward(self):
         for layer in range(1, self.layers_count):
             for relation in range(self.layers_nodes_count[layer - 1]):
@@ -114,5 +107,17 @@ class CNN:
     def __back_prop(self):
         pass
 
+    def __iteration(self):
+        pass
+
     def train(self):
         pass
+
+    def __str__(self):
+        return ""
+
+    def __repr__(self):
+        return ""
+
+    def __call__(self):
+        return ""
