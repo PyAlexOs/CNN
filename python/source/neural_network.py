@@ -17,10 +17,13 @@ class CNN:
     weights: list[list[list[float]]]
     values: list[list[float]]
 
-    weights_file: str
+    dataset_dir: str
+    out_file: str
 
     def __init__(self,
                  config_file: str,
+                 dataset_dir: str,
+                 out_file: str,
                  weights_file: Optional[str] = None):
         with open(config_file, "r") as file:
             data = json.load(file)["config"]
@@ -53,12 +56,15 @@ class CNN:
         ]
 
         self.values = [[0 for _ in range(self.layers_nodes_count[layer])] for layer in range(self.layers_count)]
+        self.dataset_dir = dataset_dir
+        self.out_file = out_file
+
         if weights_file:
-            self.weights_file = weights_file
             self.__load_weights(weights_file=weights_file)
         else:
-            self.weights_file = "weights.pickle"
             self.__fill_weights()
+
+        self.__save_weights(self.out_file)
 
     def __fill_weights(self):
         self.weights = list(list(list(random.uniform(0, 1)
@@ -70,7 +76,7 @@ class CNN:
         with open(weights_file, "rb") as file:
             self.weights = pickle.load(file)
 
-    def __save_weights(self, weights_file: str, after_epoch: Optional[int]):
+    def __save_weights(self, weights_file: str, after_epoch: Optional[int] = None):
         if after_epoch:
             weights_file = "".join(weights_file.split(".")[:-1]) + f"_epoch{after_epoch}.pickle"
         with open(weights_file, "wb") as file:
@@ -81,8 +87,8 @@ class CNN:
         return 1 / (1 + math.e ** -x)
 
     @staticmethod
-    def __activation_f_der(self, x: float) -> float:
-        return self.activation_f(x) * (1 - self.activation_f(x))
+    def __activation_f_der(x: float) -> float:
+        return CNN.__activation_f(x) * (1 - CNN.__activation_f(x))
 
     def __str__(self):
         return ""

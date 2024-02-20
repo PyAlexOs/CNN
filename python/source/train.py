@@ -24,12 +24,14 @@ def main():
     if not os.path.isdir(dataset_dir):
         raise Exception("Dataset directory not found.")
 
-    out = named_args.out
-    if not (out.endswith(".pickle")):
+    out_file = named_args.out
+    if not (out_file.endswith(".pickle")):
         raise Exception("Incorrect out file name given.")
 
     neural_network = CNN(
         config_file=config_file,
+        dataset_dir=dataset_dir,
+        out_file=out_file,
         weights_file=weights_file
                          )
 
