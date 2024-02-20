@@ -15,7 +15,7 @@ class CNN:
     layers_nodes_count: list[int]
 
     weights: list[list[list[float]]]
-    values: list[[float], [float]]
+    values: list[list[float]]
 
     def __init__(self,
                  config_file: str,
@@ -38,7 +38,7 @@ class CNN:
 
         self.image_width = image_width
         self.image_height = image_height
-        self.input_layer_size = image_width * image_height  # input layer dimension depends on the size of an image
+        self.input_layer_size = image_width * image_height
 
         self.final_objects = final_objects
         self.final_objects_count = len(final_objects)
@@ -50,6 +50,7 @@ class CNN:
             self.final_objects_count
         ]
 
+        self.values = [[0 for _ in range(self.layers_nodes_count[layer])] for layer in range(self.layers_count)]
         if weights_file:
             self.__load_weights(weights_file=weights_file)
         else:
@@ -64,13 +65,12 @@ class CNN:
     def __load_weights(self, weights_file: str):
         with open(weights_file, "r") as file:
             reader = csv.reader(file)
-            for line in reader:
-                print(line)
+            for (layer_number, layer) in enumerate(reader):
+                for (node_number, node) in enumerate(layer):
+                    
 
-        self.weights = list(list(list(random.uniform(0, 1)
-                                      for _ in range(self.layers_nodes_count[layer + 1]))
-                                 for _ in range(self.layers_nodes_count[layer]))
-                            for layer in range(self.layers_count - 1))
+    def __save_weights(self, weights_file: str):
+        pass
 
     @staticmethod
     def __activation_f(x: float) -> float:
@@ -81,13 +81,23 @@ class CNN:
         return self.activation_f(x) * (1 - self.activation_f(x))
 
     def __str__(self):
-        return '#' * 80
+        return ""
 
     def __repr__(self):
-        return "rdfgdfgvdf"
+        return ""
 
     def __call__(self):
-        # check weights and recognize
+        return ""
+
+    def feed_forward(self):
+        for layer in range(1, self.layers_count):
+            for relation in range(self.layers_nodes_count[layer - 1]):
+                for node in range(self.layers_nodes_count[layer]):
+                    self.values[layer][node] +=(
+                        self.__activation_f(self.values[layer - 1][relation] *
+                                            self.weights[layer - 1][relation][node]))
+
+    def back_prop(self):
         pass
 
     def train(self):

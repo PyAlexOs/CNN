@@ -6,7 +6,7 @@ def main():
                         help="file with weights that will be used as the initial")
     parser.add_argument("-d", "--dataset", default="../dataset",
                         help="directory with the training sample")
-    parser.add_argument("-o", "--out", default="config/weights",
+    parser.add_argument("-o", "--out", default="config/weights/weights.csv",
                         help="directory where files with weights will be saved during the training")
     named_args = parser.parse_args(sys.argv[1:])
 
@@ -34,6 +34,7 @@ def main():
                          )
 
 
+# Launch from "CNN/python" directory
 # python source/train.py
 if __name__ == '__main__':
     import os
