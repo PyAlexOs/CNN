@@ -112,9 +112,17 @@ class CNN:
                         self.__activation_f(self.values[layer - 1][relation] *
                                             self.weights[layer - 1][relation][node]))
 
-    def __back_prop(self):
+    def __back_prop(self, expected: list[float]):
         """ Adjusts weights """
-        pass
+        nodes_error: list[list[float]] = [[0. for _ in range(self.layers_nodes_count[layer])]
+                                          for layer in range(self.layers_count)]
+        for node in range(self.layers_nodes_count[-1]):
+            if expected[node] == 1:
+                nodes_error[self.layers_count - 1][node] = (
+                        1. - (self.values[self.layers_count - 1][node]) ** 2)
+            else:
+                nodes_error[self.layers_count - 1][node] = -(
+                        (self.values[self.layers_count - 1][node]) ** 2)
 
     def train(self):
         pass
