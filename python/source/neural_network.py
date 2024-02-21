@@ -66,19 +66,20 @@ class CNN:
         else:
             self.__fill_weights()
 
-        self.__save_weights(self.out_file)
-
     def __fill_weights(self):
+        """ Initializes weights randomly """
         self.weights = list(list(list(random.uniform(0, 1)
                                       for _ in range(self.layers_nodes_count[layer + 1]))
                                  for _ in range(self.layers_nodes_count[layer]))
                             for layer in range(self.layers_count - 1))
 
     def __load_weights(self, weights_file: str):
+        """ Restores weights from a file """
         with open(weights_file, "rb") as file:
             self.weights = pickle.load(file)
 
     def __save_weights(self, weights_file: str, after_epoch: Optional[int] = None):
+        """ Serializes and saves weights to a file """
         if after_epoch:
             weights_file = "".join(weights_file.split(".")[:-1]) + f"_epoch{after_epoch}.pickle"
         with open(weights_file, "wb") as file:
@@ -93,10 +94,17 @@ class CNN:
         return CNN.__activation_f(x) * (1 - CNN.__activation_f(x))
 
     @staticmethod
-    def __mse(expected: list[float]):
-        return sum(list(map(lambda x: (1 - x) ** 2, expected))) / len(expected)
+    def __mse(expected: list[float], real: list[float]) -> float:
+        """ Calculates mean square error for the vector of values of the output layer """
+        return sum(list(map(lambda x, y: (x - y) ** 2, expected, real))) / len(expected)
+
+    @staticmethod
+    def __cross_entropy(expected: list[float], real: list[float]) -> float:
+        """ Calculates cross-entropy error for the vector of values of the output layer """
+        return -sum(list(map(lambda x, y: x * math.log(y, math.e), expected, real)))
 
     def __feed_forward(self):
+        """ Calculates the values of neurons """
         for layer in range(1, self.layers_count):
             for relation in range(self.layers_nodes_count[layer - 1]):
                 for node in range(self.layers_nodes_count[layer]):
@@ -105,9 +113,7 @@ class CNN:
                                             self.weights[layer - 1][relation][node]))
 
     def __back_prop(self):
-        pass
-
-    def __iteration(self):
+        """ Adjusts weights """
         pass
 
     def train(self):

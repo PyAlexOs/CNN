@@ -36,11 +36,9 @@ def main():
                          )
 
 
-# python source/train.py
 if __name__ == '__main__':
     import os
     import sys
     import argparse
     from neural_network import CNN
-    print("█ █ █ █ █ █                        20%")
     main()
